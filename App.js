@@ -1,5 +1,5 @@
 /*global HomeScreen, DetailsScreen*/
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {Text, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -17,14 +17,14 @@ const LoadingComp = () => (
 
 const App = () => {
   const [isLoading, setLoading] = useState(true);
-
-  useEffect(() => {
-    downloadResponse();
-    // HomeScreen = require('EcoProject_Home').default;
-    // DetailsScreen = require('EcoProject_Details').default;
-
+  const cb = useCallback(() => {
     setLoading(false);
   }, []);
+  useEffect(() => {
+    downloadResponse(cb);
+    // HomeScreen = require('EcoProject_Home').default;
+    // DetailsScreen = require('EcoProject_Details').default;
+  }, [cb]);
 
   if (isLoading) {
     return <LoadingComp />;
