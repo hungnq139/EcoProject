@@ -17,6 +17,7 @@
  * @flow
  */
 'use strict';
+const _ = require('lodash');
 const exec = require('child_process').exec;
 const path = require('path');
 const fs = require('fs');
@@ -26,8 +27,14 @@ const UglifyJS = require('uglify-js');
 const DEV_REGEX = /global\.__DEV__\s?=\s?true/;
 const DEV_FALSE = 'global.__DEV__ = false';
 
+function getFileName(f) {
+  const result = _.split(f, '.');
+  const size = _.size(result);
+  return _.join(_.take(result, size - 1), '.');
+}
+
 function injectCodesToBase(config) {
-  let entryInject = "\n\nrequire('AppRegistry')\n";
+  let entryInject = '\n';
   config.customEntries.forEach((entry) => {
     if (entry.inject === false) {
       return;
@@ -35,7 +42,10 @@ function injectCodesToBase(config) {
     let indexModule = path.resolve(config.root, entry.index);
     entryInject += "require('" + indexModule + "');\n";
   });
-  let tmpEntry = path.resolve(config.root, config.baseEntry.index + '.tmp');
+  let tmpEntry = path.resolve(
+    config.root,
+    getFileName(config.baseEntry.index) + '.tmp.js',
+  );
   if (fs.existsSync(tmpEntry)) {
     fs.unlinkSync(tmpEntry);
   }

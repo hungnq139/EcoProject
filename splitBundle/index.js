@@ -30,8 +30,12 @@ const bundle = require('./src/bundler');
 commander
   .description('React Native Bundle Spliter')
   .option('--output <path>', 'Path to store bundle.', 'build')
-  .option('--config <path>', 'Config file for react-native-split.')
-  .option('--platform', 'Specify bundle platform. ', 'android')
+  .option(
+    '--config <path>',
+    'Config file for react-native-split.',
+    '.splitconfig',
+  )
+  .option('--platform <platform/>', 'Specify bundle platform.', 'android')
   .option('--dev [boolean]', 'Generate dev module.')
   .parse(process.argv);
 
