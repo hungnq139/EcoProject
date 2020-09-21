@@ -3,12 +3,12 @@ const SCREEN_ENUM = {
   HomeScreen: {
     pack: require('EcoProject_Home'),
     packageName: 'EcoProject_Home',
-    localPath: '../test_home',
+    localPath: '../../test_home',
   },
   DetailsScreen: {
     pack: require('EcoProject_Details'),
     packageName: 'EcoProject_Details',
-    localPath: '../test_details',
+    localPath: '../../test_details',
   },
 };
 

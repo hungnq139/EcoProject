@@ -1,7 +1,7 @@
 const {execSync} = require('child_process');
 const _ = require('lodash');
 
-const {SCREEN_ENUM} = require('./screenEnum');
+const {SCREEN_ENUM} = require('./src/screenEnum');
 
 function execShell(command) {
   try {
