@@ -4,8 +4,8 @@ import {Text, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
-global.HomeScreen = () => null;
-global.DetailsScreen = () => null;
+import {registerGlobalScreen, downloadResponse} from './screenRegister';
+registerGlobalScreen();
 
 const Stack = createStackNavigator();
 
@@ -19,8 +19,9 @@ const App = () => {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    HomeScreen = require();
-    DetailsScreen = require();
+    downloadResponse();
+    // HomeScreen = require('EcoProject_Home').default;
+    // DetailsScreen = require('EcoProject_Details').default;
 
     setLoading(false);
   }, []);
