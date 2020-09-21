@@ -1,12 +1,12 @@
 const SCREEN_ENUM = {
   // key : package name
   HomeScreen: {
-    pack: require('EcoProject_Home'),
+    pack: __DEV__ ? require('EcoProject_Home') : undefined,
     packageName: 'EcoProject_Home',
     localPath: '../../test_home',
   },
   DetailsScreen: {
-    pack: require('EcoProject_Details'),
+    pack: __DEV__ ? require('EcoProject_Details') : undefined,
     packageName: 'EcoProject_Details',
     localPath: '../../test_details',
   },

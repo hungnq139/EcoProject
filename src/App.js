@@ -5,7 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {registerGlobalScreen, downloadResponse} from './screenRegister';
-registerGlobalScreen();
+// registerGlobalScreen();
 
 const Stack = createStackNavigator();
 
@@ -22,8 +22,6 @@ const App = () => {
   }, []);
   useEffect(() => {
     downloadResponse(cb);
-    // HomeScreen = require('EcoProject_Home').default;
-    // DetailsScreen = require('EcoProject_Details').default;
   }, [cb]);
 
   if (isLoading) {
@@ -32,8 +30,8 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Detail" component={DetailsScreen} />
+        <Stack.Screen name="Home" component={global.HomeScreen} />
+        <Stack.Screen name="Detail" component={global.DetailsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
