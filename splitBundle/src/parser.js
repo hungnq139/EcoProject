@@ -17,6 +17,7 @@
  * @flow
  */
 
+const _ = require('lodash');
 const babylon = require('babylon');
 const traverse = require('babel-traverse').default;
 const path = require('path');
@@ -27,6 +28,15 @@ const assetPathUtil = require('./assetPathUtils');
 
 const MODULE_SPLITER = '\n';
 
+function getFileName(f) {
+  let result = _.split(f, '.');
+  let size = _.size(result);
+
+  const newPath = _.join(_.take(result, size - 1), '.');
+  result = _.split(newPath, '/');
+  size = _.size(result);
+  return _.join(_.takeRight(result, size - 1), '/');
+}
 class Parser {
   _codeBlob;
   _config;
@@ -62,7 +72,6 @@ class Parser {
     });
     this._parseAST(bundleAST);
     this._doSplit();
-
     this._bundles.forEach((subBundle) => {
       console.log('====== Split ' + subBundle.name + ' ======');
       const code = subBundle.codes.join(MODULE_SPLITER);
@@ -118,7 +127,7 @@ class Parser {
         const module = {
           id: moduleId,
           name: moduleName,
-          dependencies: this._getModuleDependency(args[0].body),
+          dependencies: this._getModuleDependency(args[2]),
           code: {start, end},
           idCodeRange: {
             start: args[1].start - node.start,
@@ -294,24 +303,24 @@ class Parser {
     );
   }
 
-  _getModuleDependency(bodyNode) {
-    if (bodyNode.type === 'BlockStatement') {
-      let {start, end} = bodyNode;
+  _getModuleDependency(dependencyNode) {
+    if (dependencyNode.type === 'ArrayExpression') {
+      let {start, end} = dependencyNode;
       return Util.getModuleDependency(this._codeBlob, start, end);
     }
     return [];
   }
 
   _isBaseEntryModule(module) {
-    let baseIndex = this._config.baseEntry.index;
-    let indexGlob = path.join(this._config.packageName, baseIndex + '.tmp');
+    const baseIndex = this._config.baseEntry.index;
+    const indexGlob = getFileName(baseIndex) + '.tmp.js';
     // base index entry.
     return minimatch(module.name, indexGlob);
   }
 
   _isCustomEntryModule(module) {
     return this._config.customEntries.find((entry) => {
-      const pathGlob = path.join(this._config.packageName, entry.index);
+      const pathGlob = entry.index;
       return minimatch(module.name, pathGlob);
     });
   }
@@ -323,7 +332,7 @@ class Parser {
     ) {
       const includes = this._config.baseEntry.includes;
       const match = includes.find((glob) => {
-        const pathGlob = path.join(this._config.packageName, glob);
+        const pathGlob = glob;
         return minimatch(module.name, pathGlob);
       });
       return typeof match !== 'undefined';

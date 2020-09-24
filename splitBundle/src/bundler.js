@@ -77,11 +77,10 @@ function bundle(config, callback) {
     if (!config.dev) {
       let globalDev = DEV_REGEX.exec(code.substring(0, 5000));
       if (globalDev) {
-        console.log('Replace ' + globalDev[0] + ' with ' + DEV_FALSE);
         code = code.replace(globalDev[0], DEV_FALSE);
       }
       fs.writeFileSync(bundlePath, code, 'utf-8');
-      code = UglifyJS.minify(bundlePath, {
+      code = UglifyJS.minify(code, {
         compress: {
           sequences: false,
           global_defs: {
@@ -89,9 +88,10 @@ function bundle(config, callback) {
           },
         },
         mangle: {
-          except: ['__d', 'require', '__DEV__'],
+          reserved: ['__d', 'require', '__DEV__'],
         },
       }).code;
+
       fs.writeFileSync(bundlePath + '.min', code, 'utf-8');
     }
     callback(error, code);

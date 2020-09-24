@@ -196,13 +196,8 @@ export function replaceModuleIdWithName(codeBlob, modules) {
 }
 
 export function getModuleDependency(codeBlob, start, end) {
-  const dependency = [];
   const bodyString = codeBlob.substring(start, end);
-  let result;
-  while ((result = MODULE_REGEX.exec(bodyString))) {
-    dependency.push(parseInt(result[1]));
-  }
-  return dependency;
+  return JSON.parse(bodyString);
 }
 
 export function getModuleDependencyCodeRange(codeBlob, start, end) {

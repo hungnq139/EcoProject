@@ -1,10 +1,9 @@
-/*global HomeScreen, DetailsScreen*/
 import React, {useEffect, useState, useCallback} from 'react';
 import {Text, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
-import {registerGlobalScreen, downloadResponse} from './screenRegister';
+import {downloadResponse} from './screenRegister';
 // registerGlobalScreen();
 
 const Stack = createStackNavigator();

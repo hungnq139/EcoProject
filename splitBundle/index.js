@@ -20,6 +20,8 @@
 'use strict';
 require('./src/setupBabel');
 
+const minimatch = require('minimatch');
+
 const fs = require('fs');
 const path = require('path');
 const commander = require('commander');

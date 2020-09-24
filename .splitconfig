@@ -8,9 +8,9 @@
   },
   "custom": [{
     "name": "EcoProject_Home",
-    "index": "./node_modules/EcoProject_Home/index.js"
+    "index": "node_modules/EcoProject_Home/index.js"
   }, {
     "name": "EcoProject_Details",
-    "index": "./node_modules/EcoProject_Details/index.js"
+    "index": "node_modules/EcoProject_Details/index.js"
   }]
 }
