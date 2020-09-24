@@ -4,7 +4,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {downloadResponse} from './screenRegister';
-// registerGlobalScreen();
 
 const Stack = createStackNavigator();
 
@@ -26,6 +25,7 @@ const App = () => {
   if (isLoading) {
     return <LoadingComp />;
   }
+
   return (
     <NavigationContainer>
       <Stack.Navigator>

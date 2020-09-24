@@ -5,13 +5,13 @@ const config = {
     includes: ['./src/*'],
   },
   custom: {
-    EcoProject_Home: {
-      pack: __DEV__ ? require('EcoProject_Home') : undefined,
+    HomeScreen: {
+      // pack: __DEV__ ? require('EcoProject_Home') : undefined,
       packageName: 'EcoProject_Home',
       localPath: '../../test_home',
     },
-    EcoProject_Details: {
-      pack: __DEV__ ? require('EcoProject_Details') : undefined,
+    DetailsScreen: {
+      // pack: __DEV__ ? require('EcoProject_Details') : undefined,
       packageName: 'EcoProject_Details',
       localPath: '../../test_details',
     },
@@ -34,4 +34,5 @@ const config = {
 //   });
 // }
 
-exports.default = config;
+export default config;
+// exports.default = config;

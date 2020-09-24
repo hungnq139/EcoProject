@@ -382,7 +382,7 @@ class Parser {
   }
 
   _doSplit() {
-    this._splitBase();
+    // this._splitBase();
 
     if (this._useCustomSplit) {
       this._customEntries.forEach((entry) => {

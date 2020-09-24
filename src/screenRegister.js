@@ -7,14 +7,6 @@ import {
   getDataFromGit,
 } from './handleGitProject';
 
-export const registerGlobalScreen = () => {
-  global._ = require('lodash');
-
-  _.forEach(config.custom, (item, key) => {
-    global[key] = () => null;
-  });
-};
-
 const handleBundle = async (cb) => {
   try {
     const arrGit = [];
@@ -26,7 +18,7 @@ const handleBundle = async (cb) => {
 
     const size = _.size(config.custom);
     const result = await Promise.all([...arrGit, ...arrStorage]);
-
+    console.info('result', result);
     const objVersion = {};
     for (let i = 0; i < size; i++) {
       const [keyGit, gitVersion] = result[i];
@@ -52,11 +44,15 @@ const handleBundle = async (cb) => {
 };
 
 export const downloadResponse = (cb) => {
-  if (__DEV__) {
-    setTimeout(() => {
-      cb && cb();
-    }, 1000);
-  } else {
-    handleBundle(cb && cb());
-  }
+  _.forEach(config.custom, (item, key) => {
+    global[key] = () => null;
+  });
+
+  // if (__DEV__) {
+  //   setTimeout(() => {
+  //     cb && cb();
+  //   }, 1000);
+  // } else {
+  handleBundle(cb && cb());
+  // }
 };

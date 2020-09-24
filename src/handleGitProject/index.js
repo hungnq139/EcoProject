@@ -32,7 +32,7 @@ export const getVersionFromGit = (project) => {
     );
     request.setRequestHeader(
       'Authorization',
-      'token dcc6056af1972a9b571f7318a635d29deaf02229',
+      'token 0bca90fc576125c1f54c7a9231d48bdac8037af5',
     );
     request.send();
   });
@@ -48,6 +48,7 @@ export const getDataFromGit = (project) => {
       }
 
       if (request.status === 200) {
+        console.info(request.responseText);
         resolve(request.responseText);
         // const {tag_name: tagName} = JSON.parse(request.responseText);
         // resolve([project, tagName]);
@@ -60,11 +61,11 @@ export const getDataFromGit = (project) => {
 
     request.open(
       'GET',
-      `https://api.github.com/repos/hungnq139/${project}/contents/index.js`,
+      `https://api.github.com/repos/hungnq139/${project}/contents/index.bundle`,
     );
     request.setRequestHeader(
       'Authorization',
-      'token dcc6056af1972a9b571f7318a635d29deaf02229',
+      'token 0bca90fc576125c1f54c7a9231d48bdac8037af5',
     );
     request.setRequestHeader('Accept', 'application/vnd.github.v3.raw');
 
