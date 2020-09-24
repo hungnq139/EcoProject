@@ -400,6 +400,7 @@ class Parser {
     cmd += ' --bundle-output ' + 'tmp.bundle';
     cmd += ' --assets-dest ' + this._config.bundleDir;
     cmd += ' --platform ' + this._config.platform;
+    cmd += ' --dev ' + this._config.dev;
     try {
       execSync(cmd, {stdio: 'inherit'});
       const code = fs.readFileSync('tmp.bundle', 'utf-8');

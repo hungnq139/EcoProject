@@ -20,7 +20,7 @@
 'use strict';
 require('./src/setupBabel');
 
-const minimatch = require('minimatch');
+global.__DEV__ = false;
 
 const fs = require('fs');
 const path = require('path');
@@ -28,6 +28,7 @@ const commander = require('commander');
 const Util = require('./src/utils');
 const Parser = require('./src/parser');
 const bundle = require('./src/bundler');
+const _ = require('lodash');
 
 commander
   .description('React Native Bundle Spliter')
@@ -35,7 +36,7 @@ commander
   .option(
     '--config <path>',
     'Config file for react-native-split.',
-    '.splitconfig',
+    'split.config.js',
   )
   .option('--platform <platform/>', 'Specify bundle platform.', 'android')
   .option('--dev [boolean]', 'Generate dev module.')
@@ -54,6 +55,18 @@ function isFileExists(fname) {
   }
 }
 
+function getCustomEntries(custom) {
+  const result = [];
+  _.forEach(custom, (item) => {
+    result.push({
+      name: item.packageName,
+      index: 'node_modules/' + item.packageName + '/index.js',
+    });
+  });
+
+  return result;
+}
+
 const configFile = path.resolve(process.cwd(), commander.config);
 const outputDir = path.resolve(process.cwd(), commander.output);
 
@@ -61,8 +74,7 @@ if (!isFileExists(configFile)) {
   console.log('Config file ' + configFile + ' is not exists!');
   process.exit(-1);
 }
-
-const rawConfig = JSON.parse(fs.readFileSync(configFile, 'utf-8'));
+const rawConfig = require(configFile).default;
 const workRoot = path.dirname(configFile);
 const outputRoot = path.join(outputDir, 'bundle-output');
 Util.ensureFolder(outputRoot);
@@ -78,7 +90,7 @@ const config = {
     index: rawConfig.base.index,
     includes: rawConfig.base.includes,
   },
-  customEntries: rawConfig.custom,
+  customEntries: getCustomEntries(rawConfig.custom),
 };
 if (!isFileExists(config.baseEntry.index)) {
   console.log('Index of base does not exists!');

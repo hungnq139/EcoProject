@@ -1,17 +1,16 @@
 // import RNFetchBlob from 'rn-fetch-blob';
 
-import {SCREEN_ENUM} from './screenEnum';
+import config from '../split.config';
 import {
   getVersionFromGit,
   getVersionFromStorage,
   getDataFromGit,
 } from './handleGitProject';
-// const dirs = RNFetchBlob.fs.dirs;
 
 export const registerGlobalScreen = () => {
   global._ = require('lodash');
 
-  _.forEach(SCREEN_ENUM, (item, key) => {
+  _.forEach(config.custom, (item, key) => {
     global[key] = () => null;
   });
 };
@@ -20,12 +19,12 @@ const handleBundle = async (cb) => {
   try {
     const arrGit = [];
     const arrStorage = [];
-    _.forEach(SCREEN_ENUM, ({packageName}, key) => {
+    _.forEach(config.custom, ({packageName}) => {
       arrGit.push(getVersionFromGit(packageName));
       arrStorage.push(getVersionFromStorage(packageName));
     });
 
-    const size = _.size(SCREEN_ENUM);
+    const size = _.size(config.custom);
     const result = await Promise.all([...arrGit, ...arrStorage]);
 
     const objVersion = {};
@@ -53,11 +52,7 @@ const handleBundle = async (cb) => {
 };
 
 export const downloadResponse = (cb) => {
-  // handleBundle();
   if (__DEV__) {
-    // _.forEach(SCREEN_ENUM, ({pack}, key) => {
-    // pack && (global[key] = pack.default);
-    // });
     setTimeout(() => {
       cb && cb();
     }, 1000);
