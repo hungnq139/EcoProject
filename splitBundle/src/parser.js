@@ -25,6 +25,8 @@ const minimatch = require('minimatch');
 const Util = require('./utils');
 const fs = require('fs');
 const assetPathUtil = require('./assetPathUtils');
+const execSync = require('child_process').execSync;
+const colors = require('colors');
 
 const MODULE_SPLITER = '\n';
 
@@ -73,7 +75,7 @@ class Parser {
     this._parseAST(bundleAST);
     this._doSplit();
     this._bundles.forEach((subBundle) => {
-      console.log('====== Split ' + subBundle.name + ' ======');
+      console.log(('\n====== Split ' + subBundle.name + ' ======').cyan);
       const code = subBundle.codes.join(MODULE_SPLITER);
       const subBundlePath = path.resolve(outputDir, subBundle.name);
       Util.ensureFolder(subBundlePath);
@@ -96,7 +98,7 @@ class Parser {
           );
         });
       }
-      console.log('====== Split ' + subBundle.name + ' done! ======');
+      console.log(('====== Split ' + subBundle.name + ' done! ======').cyan);
     });
   }
 
@@ -140,7 +142,8 @@ class Parser {
           module.assetConfig = Object.assign({}, Util.getAssetConfig(node), {
             moduleId,
           });
-          console.log('Get asset module ' + moduleName, module.assetConfig);
+          // console.log('Get asset module ' + moduleName, module.assetConfig);
+          console.log('Get asset module ' + moduleName);
         }
 
         if (!reactEntryModule && Util.isReactNativeEntry(moduleName)) {
@@ -149,15 +152,15 @@ class Parser {
         }
 
         if (this._isBaseEntryModule(module)) {
-          console.log('Get base entry module: ' + moduleName);
+          console.info('Get base entry module: '.cyan + moduleName);
           this._baseEntryIndexModule = moduleId;
         } else if (this._isCustomBaseModule(module)) {
-          console.log('Get custom base ' + moduleName);
+          console.info('Get custom base '.cyan + moduleName);
           customBase.push(moduleId);
         } else if (this._useCustomSplit) {
           let entry = this._isCustomEntryModule(module);
           if (entry) {
-            console.log('Get custom entry ' + moduleName);
+            console.info('Get custom entry '.cyan + moduleName);
             customEntry.push({
               id: moduleId,
               name: entry.name,
@@ -166,18 +169,18 @@ class Parser {
         }
 
         this._modules[moduleId] = module;
-        console.log(
-          'Module ' +
-            moduleName +
-            '(' +
-            moduleId +
-            ') dependency:' +
-            JSON.stringify(module.dependencies),
-        );
+        // console.log(
+        //   'Module ' +
+        //     moduleName +
+        //     '(' +
+        //     moduleId +
+        //     ') dependency:' +
+        //     JSON.stringify(module.dependencies),
+        // );
       } else {
-        console.log(require('util').inspect(node, false, null));
-        console.log(
-          'Cannot parse node!',
+        // console.log(require('util').inspect(node, false, null));
+        console.warn(
+          'Cannot parse node!'.yellow,
           this._codeBlob.substring(node.start, node.end),
         );
       }
@@ -188,7 +191,8 @@ class Parser {
       this._genBaseModules(reactEntryModule);
     } else {
       console.warn(
-        "Cannot find react-native entry module! You should require('react-native') at some entry.",
+        "Cannot find react-native entry module! You should require('react-native') at some entry."
+          .yellow,
       );
     }
 
@@ -250,7 +254,7 @@ class Parser {
       this._base.add(tmp);
     }
     console.log(
-      'Module ' +
+      '\nModule '.cyan +
         module.name +
         ' added to base (' +
         added +
@@ -293,7 +297,7 @@ class Parser {
       moduleSet: set,
     });
     console.log(
-      'Module ' +
+      '\nModule '.cyan +
         module.name +
         ' added to bundle ' +
         name +
@@ -391,74 +395,20 @@ class Parser {
   }
 
   _splitBase() {
-    const bundleName = 'base';
-    const dev = this._config.dev;
-    let codes = [];
-    let assetRenames = [];
-    // append codes to base
-    this._polyfills.forEach((range, index) => {
-      let code = this._codeBlob.substring(range.start, range.end);
-      if (index === 1) {
-        let requireAST = babylon.parse(code);
-        let conditionNode;
-        traverse(requireAST, {
-          enter(path) {
-            if (Util.isRequirePolyfillCondition(path.node, dev)) {
-              conditionNode = path.node;
-            }
-          },
-          exit(path) {},
-        });
-        if (conditionNode) {
-          code =
-            code.substring(0, conditionNode.start) +
-            code.substring(conditionNode.end);
-        }
-      }
-      codes.push(code);
-    });
-    this._base.forEach((moduleId) => {
-      const module = this._modules[moduleId];
-      let code = this._codeBlob.substring(module.code.start, module.code.end);
-      code =
-        code.substring(0, module.idCodeRange.start) +
-        '"' +
-        module.name +
-        '"' +
-        code.substring(module.idCodeRange.end);
-      if (module.isAsset && !!module.assetConfig) {
-        assetRenames = this._getAssetRenames(module.assetConfig, bundleName);
-        code = this._addBundleToAsset(module, bundleName, code);
-      } else if (moduleId === this._baseEntryIndexModule) {
-        let dependencies = Util.getModuleDependencyCodeRange(
-          code,
-          0,
-          code.length,
-        );
-        for (let i = dependencies.length - 1; i >= 0; i--) {
-          if (
-            this._customEntries.find(
-              (entry) =>
-                parseInt(entry.moduleId) === parseInt(dependencies[i].module),
-            )
-          ) {
-            code = code.replace(dependencies[i].code, '');
-          }
-        }
-      }
-      code = Util.replaceModuleIdWithName(code, this._modules);
-      codes.push(code);
-    });
-    this._moduleCalls.forEach((moduleCall) => {
-      let code = this._codeBlob.substring(moduleCall.start, moduleCall.end);
-      code = Util.replaceModuleIdWithName(code, this._modules);
-      codes.push(code);
-    });
-    this._bundles.push({
-      name: bundleName,
-      codes,
-      assetRenames,
-    });
+    let cmd = 'react-native bundle';
+    cmd += ' --entry-file ' + this._config.baseEntry.index;
+    cmd += ' --bundle-output ' + 'tmp.bundle';
+    cmd += ' --assets-dest ' + this._config.bundleDir;
+    cmd += ' --platform ' + this._config.platform;
+    try {
+      execSync(cmd, {stdio: 'inherit'});
+      const code = fs.readFileSync('tmp.bundle', 'utf-8');
+      this._bundles.push({
+        name: 'base',
+        codes: [code],
+      });
+      execSync('rm -rf tmp.bundle', {stdio: 'inherit'});
+    } catch (error) {}
   }
 
   _splitCustomEntry(entry) {
@@ -484,7 +434,7 @@ class Parser {
       codes.push(code);
     });
     let entryModuleName = this._modules[entry.moduleId].name;
-    codes.push('\nrequire("' + entryModuleName + '");');
+    codes.push('\n__r("' + entryModuleName + '");');
     this._bundles.push({
       name: bundleName,
       codes,
