@@ -20,15 +20,6 @@ function checkFileExists(p) {
   }
 }
 
-function checkPathExists(p) {
-  try {
-    fs.accessSync(p, fs.F_OK);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
 function start() {
   _.forEach(config.custom, ({packageName}, key) => {
     const filePath = `./build/bundle-output/split/${packageName}/index.bundle`;
@@ -56,8 +47,7 @@ function start() {
               },
               {
                 headers: {
-                  Authorization:
-                    'token 6aef7823fcaae62c32a687224b55f36ff794b037',
+                  Authorization: `token ${config.token}`,
                 },
               },
             )

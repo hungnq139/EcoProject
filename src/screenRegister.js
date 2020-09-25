@@ -1,5 +1,7 @@
 // import RNFetchBlob from 'rn-fetch-blob';
+import React from 'react';
 
+import {View, Text} from 'react-native';
 import config from '../split.config';
 import {
   getVersionFromGit,
@@ -17,7 +19,12 @@ const handleBundle = async (cb) => {
     });
 
     const size = _.size(config.custom);
-    const result = await Promise.all([...arrGit, ...arrStorage]);
+    let result = {};
+    try {
+      result = await Promise.all([...arrGit, ...arrStorage]);
+    } catch (error) {
+      console.info('error when get verison', error);
+    }
     const objVersion = {};
 
     // map git version with store version
@@ -42,7 +49,12 @@ const handleBundle = async (cb) => {
         arrData.push(getDataFromGit(key));
       }
     });
-    const objData = await Promise.all(arrData);
+    let objData = {};
+    try {
+      objData = await Promise.all(arrData);
+    } catch (error) {
+      console.info('error when get data', error);
+    }
     _.forEach(objData, ([tmp, data]) => {
       data && eval(data);
     });
@@ -50,16 +62,23 @@ const handleBundle = async (cb) => {
   cb && cb();
 };
 
+const DefaultView = () => (
+  <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+    <Text>Chua Load</Text>
+  </View>
+);
+
 export const downloadResponse = (cb) => {
   _.forEach(config.custom, (item, key) => {
-    global[key] = () => null;
+    global[key] = DefaultView;
   });
 
-  // if (__DEV__) {
-  //   setTimeout(() => {
-  //     cb && cb();
-  //   }, 1000);
-  // } else {
-  handleBundle(cb);
-  // }
+  if (__DEV__) {
+    _.forEach(config.custom, (item, key) => {
+      global[key] = item.pack;
+    });
+    cb && cb();
+  } else {
+    handleBundle(cb);
+  }
 };
