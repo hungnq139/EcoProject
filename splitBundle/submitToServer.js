@@ -33,11 +33,15 @@ function start() {
   _.forEach(config.custom, ({packageName}, key) => {
     const filePath = `./build/bundle-output/split/${packageName}/index.bundle`;
     const hasFile = checkFileExists(filePath);
-
     const projectPath = `./../${packageName}`;
     const hasPath = checkPathExists(projectPath);
     if (hasPath && hasFile) {
       execSync(`cp -R ${filePath} ${projectPath}`, {stdio: 'inherit'});
+      const timestamp = new Date().getTime();
+      execSync(
+        `cd ./${projectPath} && git add * && git commit -m "jenkins:commit bundle file - ${timestamp}" && git push`,
+        {stdio: 'inherit'},
+      );
     }
   });
 }
