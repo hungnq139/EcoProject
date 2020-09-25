@@ -32,7 +32,7 @@ export const getVersionFromGit = (project) => {
     );
     request.setRequestHeader(
       'Authorization',
-      'token 0bca90fc576125c1f54c7a9231d48bdac8037af5',
+      'token 6aef7823fcaae62c32a687224b55f36ff794b037',
     );
     request.send();
   });
@@ -60,10 +60,12 @@ export const getDataFromGit = (project) => {
     );
     request.setRequestHeader(
       'Authorization',
-      'token 0bca90fc576125c1f54c7a9231d48bdac8037af5',
+      'token 6aef7823fcaae62c32a687224b55f36ff794b037',
     );
     request.setRequestHeader('Accept', 'application/vnd.github.v3.raw');
 
     request.send();
   });
 };
+
+// 6aef7823fcaae62c32a687224b55f36ff794b037
