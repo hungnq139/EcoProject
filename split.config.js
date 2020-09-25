@@ -1,6 +1,6 @@
 const config = {
   package: 'test',
-  token: '908a6929664c8d00e95b2fd1e4b030af5edbae11',
+  token: '--token--',
   base: {
     index: './index.js',
     includes: ['./src/*'],
