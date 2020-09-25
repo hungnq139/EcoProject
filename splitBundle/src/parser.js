@@ -385,8 +385,8 @@ class Parser {
     // this._splitBase();
 
     if (this._useCustomSplit) {
-      this._customEntries.forEach((entry) => {
-        this._splitCustomEntry(entry);
+      this._customEntries.forEach((entry, index) => {
+        this._splitCustomEntry(entry, index);
       });
       console.log('Use custom split');
     } else {
@@ -412,18 +412,18 @@ class Parser {
     } catch (error) {}
   }
 
-  _splitCustomEntry(entry) {
+  _splitCustomEntry(entry, index) {
     const bundleName = entry.name;
     let codes = [];
     let assetRenames = [];
+    const upperIndex = index + 1 + '0';
     entry.moduleSet.forEach((moduleId) => {
       const module = this._modules[moduleId];
       let code = this._codeBlob.substring(module.code.start, module.code.end);
       code =
         code.substring(0, module.idCodeRange.start) +
-        '"' +
-        module.name +
-        '"' +
+        upperIndex +
+        module.id +
         code.substring(module.idCodeRange.end);
       if (module.isAsset && module.assetConfig) {
         assetRenames = assetRenames.concat(
@@ -434,8 +434,8 @@ class Parser {
       code = Util.replaceModuleIdWithName(code, this._modules);
       codes.push(code);
     });
-    let entryModuleName = this._modules[entry.moduleId].name;
-    codes.push('\n__r("' + entryModuleName + '");');
+    // let entryModuleName = this._modules[entry.moduleId].name;
+    codes.push('\n__r(' + upperIndex + entry.moduleId + ');');
     this._bundles.push({
       name: bundleName,
       codes,

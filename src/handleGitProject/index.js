@@ -48,14 +48,9 @@ export const getDataFromGit = (project) => {
       }
 
       if (request.status === 200) {
-        console.info(request.responseText);
-        resolve(request.responseText);
-        // const {tag_name: tagName} = JSON.parse(request.responseText);
-        // resolve([project, tagName]);
+        resolve([project, request.responseText]);
       } else {
-        reject('error');
-
-        // reject([project, 'error']);
+        reject([project, 'error']);
       }
     };
 

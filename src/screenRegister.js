@@ -18,8 +18,9 @@ const handleBundle = async (cb) => {
 
     const size = _.size(config.custom);
     const result = await Promise.all([...arrGit, ...arrStorage]);
-    console.info('result', result);
     const objVersion = {};
+
+    // map git version with store version
     for (let i = 0; i < size; i++) {
       const [keyGit, gitVersion] = result[i];
       if (!objVersion[keyGit]) {
@@ -34,10 +35,16 @@ const handleBundle = async (cb) => {
       objVersion[keyStore].storeVersion = storeVersion;
     }
 
+    // get data from git if version upper
+    const arrData = [];
     _.forEach(objVersion, ({gitVersion, storeVersion}, key) => {
       if (gitVersion > storeVersion) {
-        getDataFromGit(key);
+        arrData.push(getDataFromGit(key));
       }
+    });
+    const objData = await Promise.all(arrData);
+    _.forEach(objData, ([tmp, data]) => {
+      data && eval(data);
     });
   } catch (error) {}
   cb && cb();
@@ -53,6 +60,6 @@ export const downloadResponse = (cb) => {
   //     cb && cb();
   //   }, 1000);
   // } else {
-  handleBundle(cb && cb());
+  handleBundle(cb);
   // }
 };
