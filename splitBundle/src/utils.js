@@ -218,7 +218,7 @@ export function ensureFolder(dir) {
     fs.accessSync(dir, fs.F_OK);
     return true;
   } catch (e) {
-    fs.mkdirSync(dir);
+    fs.mkdirSync(dir, {recursive: true});
     return false;
   }
 }
@@ -232,7 +232,7 @@ export function mkdirsSync(dirname) {
     return true;
   } else {
     if (mkdirsSync(path.dirname(dirname))) {
-      fs.mkdirSync(dirname);
+      fs.mkdirSync(dirname, {recursive: true});
       return true;
     }
   }
