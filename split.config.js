@@ -4,7 +4,8 @@ if (!global.__DEV__) {
 
 const config = {
   package: 'test',
-  token: 'e54370694c8fdc0d173ac11e45a36a68fc40b896',
+  // --token--
+  token: '--token--',
   base: {
     index: './index.js',
     includes: ['./src/*'],
