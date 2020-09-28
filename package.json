@@ -43,6 +43,7 @@
     "metro-react-native-babel-preset": "^0.63.0",
     "minimatch": "^3.0.4",
     "react-test-renderer": "16.13.1",
+    "source-map": "^0.7.3",
     "uglify-js": "^3.10.4",
     "wml": "^0.0.83"
   },

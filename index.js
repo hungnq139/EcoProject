@@ -2,7 +2,6 @@
  * @format
  */
 
-// __DEV__ = false;
 global._ = require('lodash');
 
 import {AppRegistry} from 'react-native';

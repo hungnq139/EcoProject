@@ -60,12 +60,15 @@ function bundle(config, callback) {
 
   const tmpBase = injectCodesToBase(config);
   const bundlePath = path.resolve(config.bundleDir, 'index.bundle');
+  const sourceMapPath = path.resolve(config.bundleDir, 'index.map');
 
   let cmd = 'react-native bundle';
   cmd += ' --entry-file ' + tmpBase;
   cmd += ' --bundle-output ' + bundlePath;
   cmd += ' --assets-dest ' + config.bundleDir;
   cmd += ' --platform ' + config.platform;
+  cmd += ' --sourcemap-output ' + sourceMapPath;
+  cmd += ' --dev false';
 
   console.log('===[Bundle] Start!===');
   console.log(cmd);
@@ -73,28 +76,10 @@ function bundle(config, callback) {
     if (error) {
       callback(error);
     }
-    let code = fs.readFileSync(bundlePath, 'utf-8');
-    if (!config.dev) {
-      let globalDev = DEV_REGEX.exec(code.substring(0, 5000));
-      if (globalDev) {
-        code = code.replace(globalDev[0], DEV_FALSE);
-      }
-      fs.writeFileSync(bundlePath, code, 'utf-8');
-      code = UglifyJS.minify(code, {
-        compress: {
-          sequences: false,
-          global_defs: {
-            __DEV__: false,
-          },
-        },
-        mangle: {
-          reserved: ['__d', 'require', '__DEV__'],
-        },
-      }).code;
+    const code = fs.readFileSync(bundlePath, 'utf-8');
+    let sourceMap = fs.readFileSync(sourceMapPath, 'utf-8');
 
-      fs.writeFileSync(bundlePath + '.min', code, 'utf-8');
-    }
-    callback(error, code);
+    callback(error, code, sourceMap);
     fs.unlinkSync(tmpBase);
   }).stdout.pipe(process.stdout);
 }

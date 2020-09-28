@@ -21,7 +21,7 @@ const _ = require('lodash');
 const babylon = require('babylon');
 const traverse = require('babel-traverse').default;
 const path = require('path');
-const minimatch = require('minimatch');
+// const minimatch = require('minimatch');
 const Util = require('./utils');
 const fs = require('fs');
 const assetPathUtil = require('./assetPathUtils');
@@ -29,6 +29,11 @@ const execSync = require('child_process').execSync;
 const colors = require('colors');
 
 const MODULE_SPLITER = '\n';
+
+function minimatch(p, matchString) {
+  const re = new RegExp(`^(.).*${matchString}$`);
+  return re.test(p);
+}
 
 function getFileName(f) {
   let result = _.split(f, '.');
@@ -40,6 +45,7 @@ function getFileName(f) {
   return _.join(_.takeRight(result, size - 1), '/');
 }
 class Parser {
+  _consumer;
   _codeBlob;
   _config;
   _useCustomSplit;
@@ -51,7 +57,8 @@ class Parser {
   _bundles;
   _modules;
 
-  constructor(codeBlob, config) {
+  constructor(codeBlob, config, sourceMap) {
+    this._consumer = sourceMap;
     this._codeBlob = codeBlob;
     this._config = config;
     this._useCustomSplit = typeof config.customEntries !== 'undefined';
@@ -72,6 +79,7 @@ class Parser {
       sourceType: 'script',
       plugins: ['jsx', 'flow'],
     });
+
     this._parseAST(bundleAST);
     this._doSplit();
     this._bundles.forEach((subBundle) => {
@@ -125,7 +133,13 @@ class Parser {
         moduleCount++;
         const args = node.expression.arguments;
         const moduleId = parseInt(args[1].value);
-        const moduleName = args[3].value;
+        const moduleName = this._consumer.originalPositionFor({
+          line: args[1].loc.start.line,
+          column: args[1].loc.start.column - 1,
+        }).source;
+        if (moduleName === null) {
+          return;
+        }
         const module = {
           id: moduleId,
           name: moduleName,
@@ -241,6 +255,7 @@ class Parser {
       }
 
       if (
+        this._modules[tmp] &&
         this._modules[tmp].dependencies &&
         this._modules[tmp].dependencies.length > 0
       ) {

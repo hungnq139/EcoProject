@@ -77,7 +77,9 @@ export const downloadResponse = (cb) => {
     _.forEach(config.custom, (item, key) => {
       global[key] = item.pack;
     });
-    cb && cb();
+    setTimeout(() => {
+      cb && cb();
+    }, 1000);
   } else {
     handleBundle(cb);
   }

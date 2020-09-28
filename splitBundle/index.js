@@ -20,8 +20,6 @@
 'use strict';
 require('./src/setupBabel');
 
-global.__DEV__ = false;
-
 const fs = require('fs');
 const path = require('path');
 const commander = require('commander');
@@ -29,6 +27,7 @@ const Util = require('./src/utils');
 const Parser = require('./src/parser');
 const bundle = require('./src/bundler');
 const _ = require('lodash');
+const {SourceMapConsumer} = require('source-map');
 
 commander
   .description('React Native Bundle Spliter')
@@ -38,7 +37,7 @@ commander
     'Config file for react-native-split.',
     'split.config.js',
   )
-  .option('--platform <platform/>', 'Specify bundle platform.', 'android')
+  .option('--platform <platform/>', 'Specify bundle platform.', 'ios')
   .option('--dev [boolean]', 'Generate dev module.')
   .parse(process.argv);
 
@@ -98,11 +97,13 @@ if (!isFileExists(config.baseEntry.index)) {
 
 console.log('Work on root: ' + config.root);
 console.log('Dev mode: ' + config.dev);
-bundle(config, (err, data) => {
+bundle(config, (err, data, sourceMap) => {
   if (err) {
     throw err;
   }
   console.log('===[Bundle] Finish!===');
-  const parser = new Parser(data, config);
-  parser.splitBundle();
+  SourceMapConsumer.with(sourceMap, null, (consumer) => {
+    const parser = new Parser(data, config, consumer);
+    parser.splitBundle();
+  });
 });
