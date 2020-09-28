@@ -1,7 +1,3 @@
-if (!global.__DEV__) {
-  global.__DEV__ === false;
-}
-
 const config = {
   package: 'test',
   // --token--
