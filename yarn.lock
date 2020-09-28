@@ -2845,6 +2845,10 @@ ecc-jsbn@~0.1.1:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
 
+"ecoproject_info@https://github.com/hungnq139/EcoProject_Info.git":
+  version "1.0.0"
+  resolved "https://github.com/hungnq139/EcoProject_Info.git#8684511a4293834afa8618ba00a126453ddba8a6"
+
 ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"

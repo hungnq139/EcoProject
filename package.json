@@ -19,6 +19,7 @@
     "@react-navigation/stack": "^5.9.0",
     "EcoProject_Details": "https://github.com/hungnq139/EcoProject_Details.git",
     "EcoProject_Home": "https://github.com/hungnq139/EcoProject_Home.git",
+    "ecoproject_info": "https://github.com/hungnq139/EcoProject_Info.git",
     "lodash": "^4.17.20",
     "react": "16.13.1",
     "react-native": "0.63.2",
