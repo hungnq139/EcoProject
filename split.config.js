@@ -18,8 +18,8 @@ const config = {
       localPath: '../../test_details',
     },
     InfoScreen: {
-      pack: global.__DEV__ ? require('ecoproject_info').default : undefined,
-      packageName: 'ecoproject_info',
+      pack: global.__DEV__ ? require('EcoProject_Info').default : undefined,
+      packageName: 'EcoProject_Info',
       localPath: '../../test_details',
     },
   },
